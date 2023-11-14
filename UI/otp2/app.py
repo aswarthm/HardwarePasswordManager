@@ -1,8 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 from time import time
 
 app = Flask(__name__)
+
+offset = 0
 
 MASTER_PASSWORD = "lmao"
 
@@ -12,15 +14,16 @@ def home_page():
 
 @app.route('/get_otp')
 def get_otp():
+    global offset
     hex_master = [ord(l) for l in MASTER_PASSWORD]
     num1 = 0
 
     for i in range(len(hex_master)):
         num1 += hex_master[i]<<8*(3-i)
 
-    india_time = time() + 5.555555*60*60 - 385
+    india_time = time() + 5.555555*60*60 - 385 + offset
     print("TIME: ", india_time)
-    cur_secs = int(india_time/30)
+    cur_secs = int(india_time/150)
     cur_secs = str(cur_secs)
     pairs = [int(cur_secs[i])*10 + int(cur_secs[i+1]) for i in range(0,8,2)]
     
@@ -31,6 +34,8 @@ def get_otp():
     totp = hex(num1 + num2)
     print(num1, num2)
     print(totp)
+
+    totp = totp.upper()[2:]
 
 
 
@@ -45,6 +50,13 @@ def getBackup():
     with open("backup.data", 'rb') as f:
         data = f.read()
     return {'data': str(data)}
+
+@app.route("/offset")
+def setOffset():
+    global offset
+    print(request.args["a"])
+    offset = int(request.args["a"])
+    return str(offset)
 
 
 
