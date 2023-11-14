@@ -686,7 +686,7 @@ void getMasterFromTotp(char *totp, char *masterPass, unsigned long curTime) {
   Serial.println(totpStr);
   unsigned long num1 = strtoul(totpStr.c_str(), NULL, 16);
 
-  curTime = curTime / 30;
+  curTime = curTime/150;
 
   int twos[4];  // 56, 39, 42, 05
   int k = 0;
